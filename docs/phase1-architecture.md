@@ -1,98 +1,283 @@
-# Phase 1: Architecture Specification
-*Brindlewood Bay Companion App - Prototype*
+# Phase 1 Architecture Specification
+## Interactive Frontend Prototype (v1.1)
 
-**Author:** Mistral AI
-**Date:** July 29, 2026
-**Status:** Approved for Implementation
+## Purpose
+
+Phase 1 validates the user experience before any backend work begins.
+
+The application uses static JSON and mock data only. No Google Sheets or API integration exists in this phase.
 
 ---
 
-## Data Model
+# Goals
 
-### Maven Object
-```javascript
-const maven = {
-  id: String,          // "maven_001"
-  playerName: String,  // "Alice"
-  mavenName: String,   // "The Librarian"
-  style: String,       // "Scholarly"
-  cozyActivity: String,// "Reading"
+- Validate navigation
+- Validate layout
+- Validate mobile usability
+- Validate Keeper dashboard workflow
+- Validate game flow
+- Validate visual design
 
-  stats: {
-    vitality: Number,    // 1-5
-    composure: Number,   // 1-5
-    reason: Number,      // 1-5
-    presence: Number,    // 1-5
-    sensitivity: Number  // 1-5
-  },
+---
 
-  conditions: Array,   // Max 4 strings
-  crownQueen: Array,   // [Boolean, Boolean] - max 2
-  crownVoid: Array,    // [Boolean, Boolean] - max 2
+# Design Principles
 
-  inventory: Array,    // [{item: String, used: Boolean}]
-  moves: Array,        // [String]
-  xp: Number           // Integer
-};
+- Mobile-first
+- Two taps maximum for common actions
+- No horizontal scrolling
+- Large touch targets
+- Minimal visual clutter
+- Native-app feel
 
+---
 
+# Color System
 
-localStorage Structure
-javascript
-Copy
+## Overall Theme
 
-// All Maven data
-brindlewood_mavens: JSON { [mavenId]: MavenObject }
+Inspired by cozy seaside towns and mystery television.
 
-// Current Maven ID
-brindlewood_currentMaven: String
+### Primary Background
 
+Warm parchment
 
+### Secondary Background
 
-Component Breakdown
+Soft cream
 
-  
-    
-      File
-      Purpose
-      Lines of Code (est.)
-    
-  
-  
-    
-      index.html
-      Main structure
-      50-100
-    
-    
-      styles.css
-      All styling
-      100-150
-    
-    
-      app.js
-      Main logic
-      150-200
-    
-    
-      data.js
-      Static data
-      50
-    
-    
-      dice.js
-      Dice functions
-      20
-    
-  
+### Primary Accent
 
+Coastal blue
 
+### Success
 
+Soft green
 
-API Specifications (Future)
+### Warning
 
-getMaven(mavenId) - Retrieve Maven
-updateMaven(mavenId, updates) - Update Maven
-addCondition(mavenId, condition) - Add condition (enforces Crown rule)
-markCrown(mavenId, crownType, index) - Mark Crown as used
-rollDice(mod?) - Roll 2d6 with optional modifier
+Golden yellow
+
+### Danger
+
+Muted red
+
+### Interactive
+
+Slate blue
+
+### Text
+
+Dark charcoal
+
+### Borders
+
+Light gray
+
+---
+
+# Crown System
+
+## Crown of the Queen
+
+Crowns are earned sequentially.
+
+Players may only activate the next available crown.
+
+Example
+
+```
+□ □ □ □ □
+```
+
+After earning one:
+
+```
+✓ □ □ □ □
+```
+
+The remaining crowns remain inactive.
+
+Unavailable crowns should appear visually disabled.
+
+Example
+
+```
+✓ ☐ ☐ ☐ ☐
+```
+
+Disabled crowns use a muted gray appearance.
+
+Previously earned crowns remain highlighted.
+
+---
+
+## Crown of the Void
+
+Uses identical behavior.
+
+Cannot skip ahead.
+
+Must always be earned in order.
+
+---
+
+# Navigation
+
+## Player Navigation
+
+Tabs
+
+- Character
+- Moves
+- Investigation
+- Inventory
+- Notes
+
+Persistent bottom navigation on mobile.
+
+---
+
+## Keeper Navigation
+
+Desktop dashboard
+
+Sections
+
+- Campaign
+- Players
+- Investigation
+- Timeline
+- Secrets
+- Settings
+
+No page switching required during gameplay.
+
+---
+
+# Player Components
+
+## Character
+
+Displays
+
+- Stats
+- Conditions
+- XP
+- Crowns
+- Cozy Little Place
+
+---
+
+## Moves
+
+Displays
+
+- Maven Moves
+- Day Move
+- Night Move
+- Meddling
+
+Future location for integrated dice roller.
+
+---
+
+## Investigation
+
+Displays only public information.
+
+- Revealed clues
+- Revealed suspects
+- Revealed locations
+
+---
+
+## Inventory
+
+Displays Cozy Little Place inventory.
+
+Checkboxes only.
+
+---
+
+## Notes
+
+Simple markdown-style session notes.
+
+---
+
+# Keeper Components
+
+## Campaign Panel
+
+Current campaign information.
+
+---
+
+## Player Roster
+
+Displays
+
+- Conditions
+- Crowns
+- XP
+
+Live status indicators.
+
+---
+
+## Investigation Panel
+
+Reveal controls for
+
+- Clues
+- Suspects
+- Locations
+
+---
+
+## Timeline
+
+Chronological session events.
+
+---
+
+## Secrets
+
+Displays
+
+- Void clues
+- Dark Conspiracy
+- Keeper notes
+
+Never visible to players.
+
+---
+
+# Static Data
+
+Phase 1 uses local JSON.
+
+Example
+
+```
+
+players.json
+mysteries.json
+moves.json
+clues.json
+
+```
+
+No persistence.
+
+---
+
+# Success Criteria
+
+Phase 1 succeeds when:
+
+- Navigation feels intuitive
+- Mobile layout works well
+- Keeper dashboard supports normal gameplay
+- Visual hierarchy is clear
+- Test users require little explanation

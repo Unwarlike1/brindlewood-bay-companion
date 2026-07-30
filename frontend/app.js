@@ -1,7 +1,14 @@
 // Initialize the app
 document.addEventListener('DOMContentLoaded', () => {
-  // Initialize data
+  // Initialize data (from data.js)
   initializeData();
+
+  // Defensive migration: make sure any existing saved Maven data
+  // (e.g. from an earlier prototype session) has all the fields
+  // the current UI expects. This is what fixes the "Cozy Little
+  // Place is empty" bug when localStorage was already populated
+  // before inventory/crown data existed.
+  ensureMavenDataIntegrity();
 
   // Load Maven data
   loadMaven();
@@ -11,19 +18,63 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Set up dice roller
   setupDiceRoller();
-
-  // Set up crown toggles
-  setupCrowns();
 });
+
+// Backfill missing fields on previously-saved Mavens using the
+// templates defined in data.js, without altering data.js itself.
+function ensureMavenDataIntegrity() {
+  const raw = localStorage.getItem('brindlewood_mavens');
+  const mavens = raw ? JSON.parse(raw) : {};
+  let changed = false;
+
+  Object.keys(mavenTemplates).forEach(key => {
+    const template = mavenTemplates[key];
+
+    if (!mavens[key]) {
+      mavens[key] = JSON.parse(JSON.stringify(template));
+      changed = true;
+      return;
+    }
+
+    const existing = mavens[key];
+
+    if (!Array.isArray(existing.inventory) || existing.inventory.length === 0) {
+      existing.inventory = JSON.parse(JSON.stringify(template.inventory));
+      changed = true;
+    }
+    if (!Array.isArray(existing.crownQueen) || existing.crownQueen.length === 0) {
+      existing.crownQueen = [false, false];
+      changed = true;
+    }
+    if (!Array.isArray(existing.crownVoid) || existing.crownVoid.length === 0) {
+      existing.crownVoid = [false, false];
+      changed = true;
+    }
+    if (!Array.isArray(existing.conditions)) {
+      existing.conditions = [];
+      changed = true;
+    }
+  });
+
+  if (!localStorage.getItem('brindlewood_currentMaven')) {
+    localStorage.setItem('brindlewood_currentMaven', 'maven_001');
+    changed = true;
+  }
+
+  if (changed) {
+    localStorage.setItem('brindlewood_mavens', JSON.stringify(mavens));
+  }
+}
 
 // Load Maven data into the UI
 function loadMaven() {
   const currentMavenId = localStorage.getItem('brindlewood_currentMaven');
   const maven = getMaven(currentMavenId);
 
-  // Update header
+  // Update header (now two separate lines instead of "Style | Activity")
   document.getElementById('maven-name').textContent = maven.mavenName;
-  document.getElementById('maven-style').textContent = `${maven.style} | ${maven.cozyActivity}`;
+  document.getElementById('maven-style-value').textContent = maven.style;
+  document.getElementById('maven-activity-value').textContent = maven.cozyActivity;
 
   // Update stats
   document.getElementById('stat-vitality').textContent = maven.stats.vitality;
@@ -35,10 +86,10 @@ function loadMaven() {
   // Update conditions
   updateConditions();
 
-  // Update crowns
+  // Update crowns (Crowns tab)
   updateCrowns();
 
-  // Update inventory
+  // Update inventory (Cozy Little Place)
   updateInventory();
 }
 
@@ -82,46 +133,117 @@ function updateConditions() {
   }
 }
 
-// Update crowns display
+/* ---------------------------------------------------
+   CROWNS TAB
+   - Crown of the Queen: 2 checkboxes, always toggleable.
+     Checked = greyed out + strike-through.
+   - Crown of the Void: 2 checkboxes, must be filled in
+     order from the top. Only the "active" box (the next
+     one to check, or the most recently checked one, which
+     is the only one allowed to be unchecked) is clickable.
+     Everything else is disabled/greyed out.
+--------------------------------------------------- */
+
 function updateCrowns() {
   const currentMavenId = localStorage.getItem('brindlewood_currentMaven');
   const maven = getMaven(currentMavenId);
 
-  // Update Queen crowns
-  document.querySelectorAll('.crown[data-crown="queen"]').forEach((crown, index) => {
-    if (maven.crownQueen[index]) {
-      crown.classList.add('used');
-    } else {
-      crown.classList.remove('used');
-    }
-  });
+  renderCrownGroup('crown-queen-list', maven.crownQueen, 'queen', 'Crown of the Queen');
+  renderCrownGroup('crown-void-list', maven.crownVoid, 'void', 'Crown of the Void');
+}
 
-  // Update Void crowns
-  document.querySelectorAll('.crown[data-crown="void"]').forEach((crown, index) => {
-    if (maven.crownVoid[index]) {
-      crown.classList.add('used');
-    } else {
-      crown.classList.remove('used');
-    }
+function renderCrownGroup(containerId, crownArray, type, labelPrefix) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  crownArray.forEach((checked, index) => {
+    const enabled = type === 'queen' ? true : isVoidCheckboxEnabled(crownArray, index);
+
+    const row = document.createElement('div');
+    row.className = `crown-checkbox-row ${checked ? 'checked' : ''} ${!enabled ? 'disabled' : ''}`.trim();
+
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.id = `crown-${type}-${index}`;
+    input.checked = checked;
+    input.disabled = !enabled;
+
+    input.addEventListener('change', () => {
+      handleCrownToggle(type, index, input.checked);
+    });
+
+    const label = document.createElement('label');
+    label.setAttribute('for', input.id);
+    label.textContent = `${labelPrefix} ${index + 1}`;
+
+    row.appendChild(input);
+    row.appendChild(label);
+    container.appendChild(row);
   });
 }
 
-// Update inventory display
+// A Void checkbox can be:
+//  - checked, if it's currently unchecked AND every box above it is checked
+//  - unchecked, if it's currently checked AND every box below it is unchecked
+// This enforces "fill top to bottom, undo bottom to top" with only one
+// clickable box at a time.
+function isVoidCheckboxEnabled(crownArray, index) {
+  const isChecked = crownArray[index];
+
+  if (!isChecked) {
+    for (let i = 0; i < index; i++) {
+      if (!crownArray[i]) return false;
+    }
+    return true;
+  }
+
+  for (let i = index + 1; i < crownArray.length; i++) {
+    if (crownArray[i]) return false;
+  }
+  return true;
+}
+
+function handleCrownToggle(type, index, newChecked) {
+  const currentMavenId = localStorage.getItem('brindlewood_currentMaven');
+  const maven = getMaven(currentMavenId);
+
+  if (type === 'queen') {
+    maven.crownQueen[index] = newChecked;
+    updateMaven(currentMavenId, { crownQueen: maven.crownQueen });
+  } else {
+    // Guard against out-of-order toggles even though disabled
+    // checkboxes should already prevent this.
+    if (isVoidCheckboxEnabled(maven.crownVoid, index)) {
+      maven.crownVoid[index] = newChecked;
+      updateMaven(currentMavenId, { crownVoid: maven.crownVoid });
+    }
+  }
+
+  updateCrowns();
+}
+
+/* ---------------------------------------------------
+   COZY LITTLE PLACE (Inventory)
+   - Pulls straight from the Maven's inventory (seeded from
+     data.js), with free check/uncheck and no ordering rules.
+--------------------------------------------------- */
+
 function updateInventory() {
   const currentMavenId = localStorage.getItem('brindlewood_currentMaven');
   const maven = getMaven(currentMavenId);
   const inventoryList = document.getElementById('inventory-list');
 
-  // Clear current inventory
   inventoryList.innerHTML = '';
 
-  // Add each inventory item
-  maven.inventory.forEach(item => {
+  maven.inventory.forEach((item, index) => {
     const li = document.createElement('li');
-    li.className = `inventory-item ${item.used ? 'used' : ''}`;
+    li.className = `inventory-item ${item.used ? 'used' : ''}`.trim();
 
     const input = document.createElement('input');
     input.type = 'checkbox';
+    input.id = `inventory-item-${index}`;
     input.checked = item.used;
     input.addEventListener('change', () => {
       item.used = input.checked;
@@ -130,6 +252,7 @@ function updateInventory() {
     });
 
     const label = document.createElement('label');
+    label.setAttribute('for', input.id);
     label.textContent = item.item;
 
     li.appendChild(input);
@@ -138,33 +261,33 @@ function updateInventory() {
   });
 }
 
-// Set up navigation
+/* ---------------------------------------------------
+   NAVIGATION
+--------------------------------------------------- */
+
 function setupNavigation() {
   const navButtons = document.querySelectorAll('.nav-btn');
+  const screens = document.querySelectorAll('.screen');
 
   navButtons.forEach(button => {
     button.addEventListener('click', () => {
-      // Hide all screens
-      document.querySelectorAll('.screen').forEach(screen => {
-        screen.classList.add('hidden');
-      });
-
-      // Remove active class from all nav buttons
-      navButtons.forEach(btn => {
-        btn.classList.remove('active');
-      });
-
-      // Show selected screen
       const screenId = button.dataset.screen;
-      document.getElementById(screenId).classList.remove('hidden');
+      const targetScreen = document.getElementById(screenId);
+      if (!targetScreen) return;
 
-      // Add active class to clicked button
+      screens.forEach(screen => screen.classList.add('hidden'));
+      navButtons.forEach(btn => btn.classList.remove('active'));
+
+      targetScreen.classList.remove('hidden');
       button.classList.add('active');
     });
   });
 }
 
-// Set up dice roller
+/* ---------------------------------------------------
+   DICE ROLLER
+--------------------------------------------------- */
+
 function setupDiceRoller() {
   const rollBtn = document.getElementById('roll-btn');
   const resultElement = document.getElementById('dice-result');
@@ -176,38 +299,5 @@ function setupDiceRoller() {
     resultElement.innerHTML = `
       <p>Rolled: ${die1} + ${die2} + ${mod >= 0 ? '+' + mod : mod} = <strong>${total}</strong></p>
     `;
-  });
-}
-
-// Set up crown toggles
-function setupCrowns() {
-  document.querySelectorAll('.crown').forEach(crown => {
-    crown.addEventListener('click', () => {
-      const currentMavenId = localStorage.getItem('brindlewood_currentMaven');
-      const maven = getMaven(currentMavenId);
-      const crownType = crown.dataset.crown;
-      const index = parseInt(crown.dataset.index);
-
-      // Check if we're adding the 4th condition without a Crown
-      if (maven.conditions.length >= 3 && crownType === 'queen') {
-        // Allow marking Crown to add 4th condition
-        if (!maven.crownQueen[index]) {
-          maven.crownQueen[index] = true;
-          updateMaven(currentMavenId, { crownQueen: maven.crownQueen });
-          updateCrowns();
-          // After marking Crown, update conditions warning
-          updateConditions();
-          return;
-        }
-      }
-
-      // For Void Crowns, just toggle
-      if (crownType === 'void') {
-        maven.crownVoid[index] = !maven.crownVoid[index];
-        updateMaven(currentMavenId, { crownVoid: maven.crownVoid });
-      }
-
-      updateCrowns();
-    });
   });
 }
