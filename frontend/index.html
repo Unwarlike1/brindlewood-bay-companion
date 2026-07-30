@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Brindlewood Bay Companion</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="app">
+    <!-- Character Dashboard -->
+    <main class="screen" id="dashboard">
+      <header class="header">
+        <h1 id="maven-name">The Librarian</h1>
+        <p id="maven-style">Scholarly | Reading</p>
+      </header>
+
+      <section class="stats">
+        <div class="stat">
+          <span class="stat-label">VIT</span>
+          <span class="stat-value" id="stat-vitality">3</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">COMP</span>
+          <span class="stat-value" id="stat-composure">4</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">REAS</span>
+          <span class="stat-value" id="stat-reason">5</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">PRE</span>
+          <span class="stat-value" id="stat-presence">2</span>
+        </div>
+        <div class="stat">
+          <span class="stat-label">SEN</span>
+          <span class="stat-value" id="stat-sensitivity">3</span>
+        </div>
+      </section>
+
+      <section class="conditions">
+        <h2>Conditions</h2>
+        <div class="condition-list" id="conditions-list">
+          <!-- Conditions will be added here -->
+        </div>
+        <div class="condition-warning" id="condition-warning"></div>
+      </section>
+
+      <section class="crowns">
+        <h2>Crowns</h2>
+        <div class="crown-group">
+          <span>Queen: </span>
+          <span class="crown" data-crown="queen" data-index="0">♕</span>
+          <span class="crown" data-crown="queen" data-index="1">♕</span>
+        </div>
+        <div class="crown-group">
+          <span>Void: </span>
+          <span class="crown" data-crown="void" data-index="0">♕</span>
+          <span class="crown" data-crown="void" data-index="1">♕</span>
+        </div>
+      </section>
+
+      <section class="inventory">
+        <h2>Cozy Little Place</h2>
+        <ul class="inventory-list" id="inventory-list">
+          <!-- Inventory items will be added here -->
+        </ul>
+      </section>
+    </main>
+
+    <!-- Dice Roller -->
+    <main class="screen hidden" id="dice">
+      <header class="header">
+        <h1>Dice Roller</h1>
+      </header>
+
+      <section class="dice-roller">
+        <div class="dice-controls">
+          <select id="stat-mod">
+            <option value="0">No Modifier</option>
+            <option value="1">+1 (Vitality)</option>
+            <option value="2">+2 (Composure)</option>
+            <option value="-1">-1 (Disadvantage)</option>
+          </select>
+          <button id="roll-btn">Roll 2d6</button>
+        </div>
+        <div class="dice-result" id="dice-result">
+          <p>Roll to begin...</p>
+        </div>
+      </section>
+    </main>
+
+    <!-- Navigation -->
+    <nav class="nav">
+      <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
+      <button class="nav-btn" data-screen="dice">Dice</button>
+    </nav>
+  </div>
+
+  <script src="data.js"></script>
+  <script src="dice.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

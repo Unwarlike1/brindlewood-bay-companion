@@ -1,0 +1,265 @@
+/* Base Styles */
+:root {
+  --primary: #7E5E48;    /* Sepia */
+  --secondary: #4E7C7E;  /* Teal */
+  --accent-gold: #FFD700;
+  --accent-purple: #9B59B6;
+  --bg-dark: #2C3E50;
+  --text-light: #F5F5DC;
+  --text-dark: #2C3E50;
+  --warning: #E74C3C;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-dark);
+  color: var(--text-light);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+.app {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Header */
+.header {
+  padding: 1rem;
+  text-align: center;
+  border-bottom: 2px solid var(--primary);
+  background-color: var(--secondary);
+}
+
+.header h1 {
+  font-family: 'Press Start 2P', cursive;
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent-gold);
+  text-shadow: 2px 2px 0 var(--bg-dark);
+}
+
+.header p {
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Screens */
+.screen {
+  padding: 1rem;
+  min-height: calc(100vh - 120px);
+}
+
+.hidden {
+  display: none;
+}
+
+/* Stats */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.stat {
+  background-color: var(--primary);
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.stat-label {
+  font-size: 0.6rem;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+/* Conditions */
+.conditions {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.conditions h2,
+.crowns h2,
+.inventory h2 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--accent-gold);
+}
+
+.condition-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.condition {
+  background-color: var(--primary);
+  padding: 0.3rem 0.6rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+}
+
+.condition-warning {
+  color: var(--warning);
+  font-size: 0.8rem;
+  margin-top: 0.5rem;
+  min-height: 1rem;
+}
+
+/* Crowns */
+.crowns {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.crown-group {
+  margin: 0.5rem 0;
+}
+
+.crown {
+  font-size: 1.5rem;
+  margin: 0 0.3rem;
+  cursor: pointer;
+  opacity: 0.5;
+}
+
+.crown.used {
+  opacity: 1;
+  color: var(--accent-gold);
+}
+
+.crown[data-crown="void"].used {
+  color: var(--accent-purple);
+}
+
+/* Inventory */
+.inventory {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+.inventory-list {
+  list-style: none;
+}
+
+.inventory-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.inventory-item input {
+  margin-right: 0.5rem;
+}
+
+.inventory-item.used label {
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+
+/* Dice Roller */
+.dice-roller {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
+.dice-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.dice-controls select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  background-color: var(--primary);
+  color: var(--text-light);
+  border: 1px solid var(--text-light);
+}
+
+.dice-controls button {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--accent-gold);
+  color: var(--text-dark);
+  border: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.dice-result {
+  font-size: 2rem;
+  text-align: center;
+  min-height: 4rem;
+  padding: 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+}
+
+/* Navigation */
+.nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 0.5rem;
+  background-color: var(--secondary);
+  border-top: 2px solid var(--primary);
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+}
+
+.nav-btn {
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--text-light);
+  font-size: 0.9rem;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.nav-btn.active {
+  background-color: var(--accent-gold);
+  color: var(--text-dark);
+  font-weight: bold;
+}
+
+/* Responsive */
+@media (min-width: 600px) {
+  .stats {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
