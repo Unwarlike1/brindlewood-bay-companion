@@ -68,6 +68,25 @@ function ensureMavenDataIntegrity() {
 
 // Load Maven data into the UI
 function loadMaven() {
+  // SAFETY CHECK - Initialize if needed
+  if (!localStorage.getItem('brindlewood_mavens')) {
+    initializeData();  // Make sure data exists
+  }
+
+  const currentMavenId = localStorage.getItem('brindlewood_currentMaven');
+  if (!currentMavenId) {
+    // Set a default if none exists
+    localStorage.setItem('brindlewood_currentMaven', 'maven_001');
+  }
+
+  const maven = getMaven(localStorage.getItem('brindlewood_currentMaven'));
+  if (!maven) {
+    console.error("Maven not found! Using default.");
+    // Use a fallback
+    document.getElementById('maven-name').textContent = "The Librarian";
+    // ... set other defaults
+    return;
+  }
   const currentMavenId = localStorage.getItem('brindlewood_currentMaven');
   const maven = getMaven(currentMavenId);
 
