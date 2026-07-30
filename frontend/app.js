@@ -94,9 +94,11 @@ function loadMaven() {
 }
 
 // Get Maven from localStorage
-function getMaven(mavenId) {
-  const mavens = JSON.parse(localStorage.getItem('brindlewood_mavens'));
-  return mavens[mavenId];
+async function getMaven(mavenId) {
+  const response = await fetch(
+    'https://script.google.com/macros/s/AKfycbyv_A5QzoqRBCBVaNQijSGrKaZaqdDPRLxQr3823P1F5hgLPAD1EpdSlCNX1qhJ7Ssfaw/exec?endpoint=api/mavens&playerId=' + mavenId
+  );
+  return await response.json();
 }
 
 // Update Maven in localStorage
