@@ -1,15 +1,22 @@
-/* Base Styles */
+/* ============================================
+   Tokens
+   ============================================ */
 :root {
-  --primary: #E8B4B8;        /* Soft rose */
-  --lavender: #C9A0DC;        /* Lavender accent */
-  --secondary: #FFF8DC;       /* Cream */
-  --sage: #D1D8C8;            /* Light sage */
-  --accent-gold: #FFD700;     /* Gold */
-  --bg: #FFF0F5;              /* Very light pink/beige */
-  --text-dark: #4A2C2A;       /* Dark brown */
-  --text-purple: #4B0082;     /* Deep purple */
-  --warning: #B33A3A;
-  --disabled-grey: #A99B99;
+  --void: #0F0B0E;          /* near-black background */
+  --void-2: #171115;        /* card surface, slightly lifted */
+  --void-3: #1E1620;        /* elevated surface / inputs */
+  --wine: #3D1526;          /* deep dried-blood burgundy */
+  --wine-light: #55203A;    /* highlight within wine */
+  --parchment: #E8DFD3;     /* primary text, aged paper */
+  --parchment-dim: #B9AFA0; /* secondary text */
+  --gold: #B8935A;          /* tarnished gilt accent */
+  --gold-bright: #D8B87A;   /* hover/active gilt */
+  --ash-lavender: #8577A0;  /* muted accent, links/secondary */
+  --warning: #9C4A4A;       /* desaturated warning red */
+  --divider: rgba(184, 147, 90, 0.22);
+  --shadow-soft: 0 4px 14px rgba(0, 0, 0, 0.45);
+  --radius-card: 14px;
+  --radius-sm: 8px;
 }
 
 * {
@@ -19,123 +26,149 @@
 }
 
 body {
-  font-family: 'Roboto', sans-serif;
-  background-color: var(--bg);
-  color: var(--text-dark);
+  font-family: 'Inter', sans-serif;
+  background-color: var(--void);
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(61, 21, 38, 0.55), transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(61, 21, 38, 0.25), transparent 60%);
+  background-attachment: fixed;
+  color: var(--parchment);
   min-height: 100vh;
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
 }
 
 .app {
-  max-width: 100%;
+  max-width: 480px;
   margin: 0 auto;
   padding: 0;
-  padding-bottom: 70px; /* room for fixed nav */
+  padding-bottom: calc(76px + env(safe-area-inset-bottom));
+  min-height: 100vh;
 }
 
-/* Header */
+/* ============================================
+   App Bar (per-screen header)
+   ============================================ */
 .header {
-  padding: 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  padding: 1.1rem 1.25rem 1rem;
   text-align: center;
-  border-bottom: 3px solid var(--accent-gold);
-  background-color: var(--primary);
+  background-color: rgba(23, 17, 21, 0.85);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--divider);
 }
 
 .header h1 {
-  font-family: 'Press Start 2P', cursive;
-  font-size: 1.1rem;
-  margin-bottom: 0.6rem;
-  color: var(--text-purple);
-  text-shadow: 1px 1px 0 var(--secondary);
+  font-family: 'Cinzel', serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  letter-spacing: 0.03em;
+  color: var(--gold-bright);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .maven-subtitle {
-  margin-top: 0.3rem;
+  margin-top: 0.5rem;
 }
 
 .maven-style-line {
   font-family: 'Cormorant Garamond', serif;
   font-style: italic;
   font-weight: 600;
-  font-size: 1.1rem;
-  color: var(--text-dark);
+  font-size: 1.05rem;
+  color: var(--parchment-dim);
   line-height: 1.5;
 }
 
 .subtitle-label {
   font-weight: 700;
-  color: var(--text-purple);
+  color: var(--ash-lavender);
   margin-right: 0.3rem;
 }
 
-/* Screens */
+/* ============================================
+   Screens
+   ============================================ */
 .screen {
-  padding: 1rem;
-  min-height: calc(100vh - 120px);
+  min-height: 100vh;
+}
+
+.screen-body {
+  padding: 1.1rem 1rem 1.5rem;
 }
 
 .hidden {
   display: none;
 }
 
-/* Stats */
+/* ============================================
+   Stats — soft squares
+   ============================================ */
 .stats {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 0.4rem;
-  margin: 1rem 0;
+  gap: 0.45rem;
+  margin: 0 0 1.1rem;
 }
 
 .stat {
-  background-color: var(--secondary);
-  border: 2px solid var(--accent-gold);
-  border-radius: 10px; /* soft square, not a circle */
+  background-color: var(--void-3);
+  border: 1px solid var(--divider);
+  border-radius: 10px;
   aspect-ratio: 1 / 1;
   width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
   padding: 0.2rem;
   text-align: center;
+  box-shadow: var(--shadow-soft);
 }
 
 .stat-label {
-  font-size: 0.5rem;
+  font-size: 0.48rem;
   text-transform: uppercase;
-  color: var(--text-purple);
-  font-weight: 700;
-  line-height: 1.1;
+  letter-spacing: 0.04em;
+  color: var(--gold);
+  font-weight: 600;
+  line-height: 1.15;
 }
 
 .stat-value {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--text-dark);
-  margin-top: 0.2rem;
+  font-family: 'Cinzel', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--parchment);
+  margin-top: 0.25rem;
+}
+
+/* ============================================
+   Cards
+   ============================================ */
+.card {
+  margin: 0 0 1.1rem;
+  padding: 1rem 1rem 1.1rem;
+  background-color: var(--void-2);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-soft);
+}
+
+.card h2,
+.crown-section h2 {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.6rem;
+  color: var(--gold-bright);
+  text-transform: uppercase;
 }
 
 /* Conditions */
-.conditions,
-.inventory {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: var(--secondary);
-  border: 1px solid var(--sage);
-  border-radius: 12px;
-}
-
-.conditions h2,
-.crown-section h2,
-.inventory h2 {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-  color: var(--text-purple);
-  font-family: 'Press Start 2P', cursive;
-  font-size: 0.8rem;
-}
-
 .condition-list {
   display: flex;
   flex-wrap: wrap;
@@ -143,85 +176,128 @@ body {
 }
 
 .condition {
-  background-color: var(--primary);
-  color: var(--text-dark);
-  padding: 0.3rem 0.6rem;
+  background-color: var(--wine);
+  color: var(--parchment);
+  padding: 0.32rem 0.7rem;
   border-radius: 20px;
   font-size: 0.8rem;
+  border: 1px solid var(--divider);
 }
 
 .condition-warning {
   color: var(--warning);
   font-size: 0.8rem;
-  margin-top: 0.5rem;
+  margin-top: 0.6rem;
   min-height: 1rem;
 }
 
-/* Crowns Tab */
-.crown-section {
-  margin: 1rem 0;
-  padding: 1rem;
-  background-color: var(--secondary);
-  border: 1px solid var(--sage);
-  border-radius: 12px;
-}
-
+/* ============================================
+   Crowns Tab
+   ============================================ */
 .crown-hint {
   font-size: 0.75rem;
-  color: var(--text-dark);
-  opacity: 0.75;
-  margin-bottom: 0.6rem;
+  color: var(--parchment-dim);
+  opacity: 0.85;
+  margin-bottom: 0.9rem;
   font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
 }
 
-.crown-checkbox-list {
+.crown-medallion-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9rem 0.7rem;
+  justify-content: flex-start;
+}
+
+.crown-medallion {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-}
-
-.crown-checkbox-row {
-  display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.5rem 0.6rem;
-  border-radius: 8px;
-  background-color: rgba(255, 255, 255, 0.5);
-  transition: opacity 0.2s ease;
-}
-
-.crown-checkbox-row input[type="checkbox"] {
-  width: 1.1rem;
-  height: 1.1rem;
-  accent-color: var(--lavender);
+  gap: 0.4rem;
+  width: 76px;
   cursor: pointer;
+  user-select: none;
 }
 
-.crown-checkbox-row label {
-  font-size: 0.95rem;
-  color: var(--text-dark);
-  cursor: pointer;
+.medallion-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  overflow: hidden;
 }
 
-.crown-checkbox-row.checked {
-  background-color: rgba(201, 160, 220, 0.2);
+.medallion-visual {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  background: radial-gradient(circle at 35% 30%, var(--wine-light), var(--wine));
+  position: relative;
+  box-shadow:
+    inset 0 2px 5px rgba(0, 0, 0, 0.45),
+    0 1px 3px rgba(0, 0, 0, 0.6);
+  transition: background 0.25s ease, border-color 0.25s ease, transform 0.15s ease;
 }
 
-.crown-checkbox-row.checked label {
+.crown-medallion:active .medallion-visual {
+  transform: scale(0.94);
+}
+
+.medallion-name {
+  font-size: 0.66rem;
+  text-align: center;
+  color: var(--parchment-dim);
+  line-height: 1.2;
+  transition: color 0.2s ease, opacity 0.2s ease;
+}
+
+/* Checked state — the "crack" */
+.crown-medallion.checked .medallion-visual {
+  background: radial-gradient(circle at 35% 30%, #241a1e, #120d10);
+  border-color: var(--parchment-dim);
+}
+
+.crown-medallion.checked .medallion-visual::before,
+.crown-medallion.checked .medallion-visual::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 2px;
+  height: 68%;
+  background: var(--gold);
+  opacity: 0.8;
+}
+
+.crown-medallion.checked .medallion-visual::before {
+  transform: translate(-50%, -50%) rotate(22deg);
+}
+
+.crown-medallion.checked .medallion-visual::after {
+  transform: translate(-50%, -50%) rotate(-18deg);
+}
+
+.crown-medallion.checked .medallion-name {
   text-decoration: line-through;
-  color: var(--disabled-grey);
+  color: var(--parchment-dim);
+  opacity: 0.65;
 }
 
-.crown-checkbox-row.disabled {
-  opacity: 0.45;
-}
-
-.crown-checkbox-row.disabled input[type="checkbox"],
-.crown-checkbox-row.disabled label {
+/* Disabled (locked) Void layers */
+.crown-medallion.disabled {
   cursor: not-allowed;
+  opacity: 0.4;
 }
 
-/* Inventory */
+.crown-medallion.disabled .medallion-visual {
+  filter: grayscale(0.5);
+}
+
+/* ============================================
+   Cozy Little Place (Inventory)
+   ============================================ */
 .inventory-list {
   list-style: none;
 }
@@ -229,36 +305,45 @@ body {
 .inventory-item {
   display: flex;
   align-items: center;
-  padding: 0.5rem 0;
-  border-bottom: 1px solid var(--sage);
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--divider);
+}
+
+.inventory-item:last-child {
+  border-bottom: none;
 }
 
 .inventory-item input {
-  margin-right: 0.6rem;
-  width: 1.1rem;
-  height: 1.1rem;
-  accent-color: var(--primary);
+  margin-right: 0.7rem;
+  width: 1.2rem;
+  height: 1.2rem;
+  accent-color: var(--gold);
   cursor: pointer;
+  flex-shrink: 0;
 }
 
 .inventory-item label {
-  color: var(--text-dark);
+  color: var(--parchment);
   cursor: pointer;
+  font-size: 0.95rem;
 }
 
 .inventory-item.used label {
   text-decoration: line-through;
-  opacity: 0.55;
-  color: var(--disabled-grey);
+  opacity: 0.5;
+  color: var(--parchment-dim);
 }
 
-/* Dice Roller */
+/* ============================================
+   Dice Roller
+   ============================================ */
 .dice-roller {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 60vh;
+  min-height: 55vh;
+  gap: 0.5rem;
 }
 
 .dice-controls {
@@ -267,78 +352,113 @@ body {
   gap: 1rem;
   align-items: center;
   margin-bottom: 2rem;
+  width: 100%;
+  max-width: 280px;
 }
 
 .dice-controls select {
-  padding: 0.5rem;
-  border-radius: 8px;
-  background-color: var(--secondary);
-  color: var(--text-dark);
-  border: 2px solid var(--primary);
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: var(--radius-sm);
+  background-color: var(--void-3);
+  color: var(--parchment);
+  border: 1px solid var(--divider);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.95rem;
 }
 
 .dice-controls button {
-  padding: 0.75rem 1.5rem;
-  background-color: var(--accent-gold);
-  color: var(--text-dark);
+  width: 100%;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold));
+  color: var(--void);
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   cursor: pointer;
-  font-weight: bold;
+  font-weight: 700;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
+  box-shadow: 0 3px 10px rgba(184, 147, 90, 0.35);
+  transition: transform 0.1s ease;
 }
 
-.dice-controls button:hover {
-  background-color: #f0c700;
+.dice-controls button:active {
+  transform: scale(0.97);
 }
 
 .dice-result {
-  font-size: 1.6rem;
+  font-size: 1.5rem;
   text-align: center;
   min-height: 4rem;
-  padding: 1rem;
-  background-color: var(--secondary);
-  border: 1px solid var(--sage);
-  border-radius: 12px;
-  color: var(--text-dark);
+  padding: 1.1rem;
+  background-color: var(--void-2);
+  border: 1px solid var(--divider);
+  border-radius: var(--radius-card);
+  color: var(--parchment);
+  width: 100%;
+  max-width: 280px;
+  box-shadow: var(--shadow-soft);
 }
 
-/* Navigation */
+.dice-result strong {
+  color: var(--gold-bright);
+}
+
+/* ============================================
+   Bottom Navigation
+   ============================================ */
 .nav {
   display: flex;
   justify-content: space-around;
-  padding: 0.5rem;
-  background-color: var(--primary);
-  border-top: 3px solid var(--accent-gold);
+  align-items: stretch;
+  padding: 0.4rem 0.4rem calc(0.4rem + env(safe-area-inset-bottom));
+  background-color: rgba(23, 17, 21, 0.92);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-top: 1px solid var(--divider);
   position: fixed;
   bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
+  max-width: 480px;
 }
 
 .nav-btn {
-  padding: 0.5rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  min-height: 52px;
+  padding: 0.4rem;
   background: none;
   border: none;
-  color: var(--text-dark);
-  font-size: 0.9rem;
-  cursor: pointer;
-  border-radius: 8px;
+  border-top: 2px solid transparent;
+  color: var(--parchment-dim);
+  font-family: 'Inter', sans-serif;
+  font-size: 0.72rem;
   font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.nav-icon {
+  width: 22px;
+  height: 22px;
 }
 
 .nav-btn.active {
-  background-color: var(--accent-gold);
-  color: var(--text-dark);
-  font-weight: bold;
+  color: var(--gold-bright);
+  border-top-color: var(--gold);
 }
 
-/* Responsive */
+/* ============================================
+   Responsive
+   ============================================ */
 @media (min-width: 600px) {
-  .stats {
-    grid-template-columns: repeat(5, 1fr);
-  }
-
   .stat {
     max-width: 90px;
   }

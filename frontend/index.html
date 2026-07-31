@@ -2,13 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Brindlewood Bay Companion</title>
   <link rel="stylesheet" href="styles.css">
-  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
   <div class="app">
+
     <!-- Character Dashboard -->
     <main class="screen" id="dashboard">
       <header class="header">
@@ -19,43 +20,45 @@
         </div>
       </header>
 
-      <section class="stats">
-        <div class="stat">
-          <span class="stat-label">Vitality</span>
-          <span class="stat-value" id="stat-vitality">3</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Composure</span>
-          <span class="stat-value" id="stat-composure">4</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Reason</span>
-          <span class="stat-value" id="stat-reason">5</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Presence</span>
-          <span class="stat-value" id="stat-presence">2</span>
-        </div>
-        <div class="stat">
-          <span class="stat-label">Sensitivity</span>
-          <span class="stat-value" id="stat-sensitivity">3</span>
-        </div>
-      </section>
+      <div class="screen-body">
+        <section class="stats">
+          <div class="stat">
+            <span class="stat-label">Vitality</span>
+            <span class="stat-value" id="stat-vitality">3</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Composure</span>
+            <span class="stat-value" id="stat-composure">4</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Reason</span>
+            <span class="stat-value" id="stat-reason">5</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Presence</span>
+            <span class="stat-value" id="stat-presence">2</span>
+          </div>
+          <div class="stat">
+            <span class="stat-label">Sensitivity</span>
+            <span class="stat-value" id="stat-sensitivity">3</span>
+          </div>
+        </section>
 
-      <section class="conditions">
-        <h2>Conditions</h2>
-        <div class="condition-list" id="conditions-list">
-          <!-- Conditions will be added here -->
-        </div>
-        <div class="condition-warning" id="condition-warning"></div>
-      </section>
+        <section class="card conditions">
+          <h2>Conditions</h2>
+          <div class="condition-list" id="conditions-list">
+            <!-- Conditions will be added here -->
+          </div>
+          <div class="condition-warning" id="condition-warning"></div>
+        </section>
 
-      <section class="inventory">
-        <h2>Cozy Little Place</h2>
-        <ul class="inventory-list" id="inventory-list">
-          <!-- Inventory items will be added here -->
-        </ul>
-      </section>
+        <section class="card inventory">
+          <h2>Cozy Little Place</h2>
+          <ul class="inventory-list" id="inventory-list">
+            <!-- Inventory items will be added here -->
+          </ul>
+        </section>
+      </div>
     </main>
 
     <!-- Crowns -->
@@ -64,21 +67,23 @@
         <h1>Crowns</h1>
       </header>
 
-      <section class="crown-section">
-        <h2>Crown of the Queen</h2>
-        <p class="crown-hint">Always available &mdash; check or uncheck freely.</p>
-        <div class="crown-checkbox-list" id="crown-queen-list">
-          <!-- Queen crown checkboxes rendered here -->
-        </div>
-      </section>
+      <div class="screen-body">
+        <section class="card crown-section">
+          <h2>Crown of the Queen</h2>
+          <p class="crown-hint">Always available &mdash; mark or unmark freely.</p>
+          <div class="crown-medallion-grid" id="crown-queen-list">
+            <!-- Queen crown medallions rendered here -->
+          </div>
+        </section>
 
-      <section class="crown-section">
-        <h2>Crown of the Void</h2>
-        <p class="crown-hint">Fill in order from the top. Only the active box can be checked or unchecked.</p>
-        <div class="crown-checkbox-list" id="crown-void-list">
-          <!-- Void crown checkboxes rendered here -->
-        </div>
-      </section>
+        <section class="card crown-section">
+          <h2>Crown of the Void</h2>
+          <p class="crown-hint">The void fills from the first layer down. Only the active layer can be sealed or broken.</p>
+          <div class="crown-medallion-grid" id="crown-void-list">
+            <!-- Void crown medallions rendered here -->
+          </div>
+        </section>
+      </div>
     </main>
 
     <!-- Dice Roller -->
@@ -87,27 +92,51 @@
         <h1>Dice Roller</h1>
       </header>
 
-      <section class="dice-roller">
-        <div class="dice-controls">
-          <select id="stat-mod">
-            <option value="0">No Modifier</option>
-            <option value="1">+1 (Vitality)</option>
-            <option value="2">+2 (Composure)</option>
-            <option value="-1">-1 (Disadvantage)</option>
-          </select>
-          <button id="roll-btn">Roll 2d6</button>
-        </div>
-        <div class="dice-result" id="dice-result">
-          <p>Roll to begin...</p>
-        </div>
-      </section>
+      <div class="screen-body">
+        <section class="dice-roller">
+          <div class="dice-controls">
+            <select id="stat-mod">
+              <option value="0">No Modifier</option>
+              <option value="1">+1 (Vitality)</option>
+              <option value="2">+2 (Composure)</option>
+              <option value="-1">-1 (Disadvantage)</option>
+            </select>
+            <button id="roll-btn">Roll 2d6</button>
+          </div>
+          <div class="dice-result" id="dice-result">
+            <p>Roll to begin...</p>
+          </div>
+        </section>
+      </div>
     </main>
 
     <!-- Navigation -->
     <nav class="nav">
-      <button class="nav-btn active" data-screen="dashboard">Dashboard</button>
-      <button class="nav-btn" data-screen="crowns">Crowns</button>
-      <button class="nav-btn" data-screen="dice">Dice</button>
+      <button class="nav-btn active" data-screen="dashboard">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 5.5C4 4.67 4.67 4 5.5 4H11v16H5.5A1.5 1.5 0 0 1 4 18.5v-13Z"></path>
+          <path d="M20 5.5c0-.83-.67-1.5-1.5-1.5H13v16h5.5a1.5 1.5 0 0 0 1.5-1.5v-13Z"></path>
+        </svg>
+        <span>Dashboard</span>
+      </button>
+      <button class="nav-btn" data-screen="crowns">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 8.5 7 11l5-6 5 6 4-2.5V17a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8.5Z"></path>
+          <path d="M4 20h16"></path>
+        </svg>
+        <span>Crowns</span>
+      </button>
+      <button class="nav-btn" data-screen="dice">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="4" y="4" width="16" height="16" rx="3"></rect>
+          <circle cx="8.5" cy="8.5" r="1.1" fill="currentColor" stroke="none"></circle>
+          <circle cx="15.5" cy="8.5" r="1.1" fill="currentColor" stroke="none"></circle>
+          <circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"></circle>
+          <circle cx="8.5" cy="15.5" r="1.1" fill="currentColor" stroke="none"></circle>
+          <circle cx="15.5" cy="15.5" r="1.1" fill="currentColor" stroke="none"></circle>
+        </svg>
+        <span>Dice</span>
+      </button>
     </nav>
   </div>
 
