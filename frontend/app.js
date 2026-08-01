@@ -5,13 +5,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Defensive migration: make sure any existing saved Maven data
   // has every field the current UI expects (inventory, conditions,
-  // and the new named-crown arrays). This is what prevents things
-  // like an empty "Cozy Little Place" when localStorage already had
-  // data from an earlier version of the prototype.
+  // and the new named-crown arrays), and that brindlewood_currentMaven
+  // actually points at a real entry, regardless of what key scheme
+  // was used to store it in a previous session.
   ensureMavenDataIntegrity();
 
-  // Load Maven data
-  loadMaven();
+  // Load Maven data. Wrapped in a try/catch so that if a browser
+  // still has malformed data from an earlier prototype iteration,
+  // the app self-heals instead of silently breaking navigation
+  // (setupNavigation() must always run, no matter what).
+  try {
+    loadMaven();
+  } catch (err) {
+    console.error('Maven data was invalid — resetting to defaults.', err);
+    localStorage.removeItem('brindlewood_mavens');
+    localStorage.removeItem('brindlewood_currentMaven');
+    initializeData();
+    ensureMavenDataIntegrity();
+    loadMaven();
+  }
 
   // Set up navigation
   setupNavigation();
@@ -52,23 +64,36 @@ const allCrowns = {
 
 // Backfill missing fields on previously-saved Mavens using the
 // templates defined in data.js, without altering data.js itself.
+//
+// Important: data.js stores brindlewood_mavens keyed by template
+// name ("librarian", "detective") but stores brindlewood_currentMaven
+// as the Maven's internal id ("maven_001"). Those are NOT the same
+// string, so this function works off whatever keys actually exist
+// in storage (and each entry's own .id field) rather than assuming
+// mavenTemplates' outer keys — otherwise a real, already-saved Maven
+// can be silently skipped and end up missing fields like
+// markedQueenCrowns, which crashes the Crowns tab.
 function ensureMavenDataIntegrity() {
   const raw = localStorage.getItem('brindlewood_mavens');
-  const mavens = raw ? JSON.parse(raw) : {};
+  let mavens = raw ? JSON.parse(raw) : {};
   let changed = false;
 
-  Object.keys(mavenTemplates).forEach(key => {
-    const template = mavenTemplates[key];
+  if (!mavens || Object.keys(mavens).length === 0) {
+    mavens = {};
+    Object.values(mavenTemplates).forEach(template => {
+      mavens[template.id] = JSON.parse(JSON.stringify(template));
+    });
+    changed = true;
+  }
 
-    if (!mavens[key]) {
-      mavens[key] = JSON.parse(JSON.stringify(template));
-      mavens[key].markedQueenCrowns = [];
-      mavens[key].markedVoidCrowns = [];
-      changed = true;
-      return;
-    }
+  const templateList = Object.values(mavenTemplates);
 
+  Object.keys(mavens).forEach(key => {
     const existing = mavens[key];
+    if (!existing) return;
+
+    const template =
+      templateList.find(t => t.id === existing.id) || templateList[0];
 
     if (!Array.isArray(existing.inventory) || existing.inventory.length === 0) {
       existing.inventory = JSON.parse(JSON.stringify(template.inventory));
@@ -88,8 +113,17 @@ function ensureMavenDataIntegrity() {
     }
   });
 
-  if (!localStorage.getItem('brindlewood_currentMaven')) {
-    localStorage.setItem('brindlewood_currentMaven', 'maven_001');
+  // Make sure brindlewood_currentMaven actually resolves to a real
+  // entry, whether storage keys by template name or by internal id.
+  const storedCurrent = localStorage.getItem('brindlewood_currentMaven');
+  const resolvesDirectly = storedCurrent && mavens[storedCurrent];
+  const resolvesById =
+    storedCurrent && Object.values(mavens).some(m => m.id === storedCurrent);
+
+  if (!resolvesDirectly && !resolvesById) {
+    const firstKey = Object.keys(mavens)[0];
+    const fallbackId = mavens[firstKey] ? mavens[firstKey].id || firstKey : 'maven_001';
+    localStorage.setItem('brindlewood_currentMaven', fallbackId);
     changed = true;
   }
 
@@ -102,16 +136,26 @@ function ensureMavenDataIntegrity() {
    MAVEN DATA (local storage, synchronous)
 --------------------------------------------------- */
 
+// Find the storage key for a given Maven id, whether brindlewood_mavens
+// happens to be keyed by that id directly or by a template name whose
+// .id field matches it.
+function resolveMavenKey(mavens, mavenId) {
+  if (mavens[mavenId]) return mavenId;
+  return Object.keys(mavens).find(key => mavens[key] && mavens[key].id === mavenId) || null;
+}
+
 // Get Maven from localStorage
 function getMaven(mavenId) {
-  const mavens = JSON.parse(localStorage.getItem('brindlewood_mavens'));
-  return mavens[mavenId];
+  const mavens = JSON.parse(localStorage.getItem('brindlewood_mavens')) || {};
+  const key = resolveMavenKey(mavens, mavenId);
+  return key ? mavens[key] : undefined;
 }
 
 // Update Maven in localStorage
 function updateMaven(mavenId, updates) {
-  const mavens = JSON.parse(localStorage.getItem('brindlewood_mavens'));
-  mavens[mavenId] = { ...mavens[mavenId], ...updates };
+  const mavens = JSON.parse(localStorage.getItem('brindlewood_mavens')) || {};
+  const key = resolveMavenKey(mavens, mavenId) || mavenId;
+  mavens[key] = { ...mavens[key], ...updates };
   localStorage.setItem('brindlewood_mavens', JSON.stringify(mavens));
 }
 
